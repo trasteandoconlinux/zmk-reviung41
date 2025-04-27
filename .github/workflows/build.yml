@@ -1,38 +1,34 @@
-name: Build Reviung41 Firmware
+name: Build Reviung41
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:  # Para poder lanzarlo manualmente desde GitHub si quieres
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     container:
-      image: ghcr.io/zmkfirmware/zmk-dev-container:latest  # Contenedor oficial de ZMK
+      image: zmkfirmware/zmk-build-arm:stable   # <- cambio clave
 
     steps:
-      - name: Checkout config repo
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          submodules: true  # Necesario para traer ZMK como submodule si está definido
+          submodules: true         # tu repo tipo “config” trae ZMK como submódulo
 
-      - name: Initialize ZMK workspace
+      - name: Init west workspace
         run: |
-          west init -l config     # 'config' es la carpeta donde tienes tus shields y keymaps
+          west init -l config      # ajusta si tu carpeta se llama distinto
           west update
           west zephyr-export
           source zephyr/zephyr-env.sh
 
-      - name: Build Reviung41 (nice_nano_v2)
+      - name: Build Reviung41
         run: |
           west build -d build/reviung41 -b nice_nano_v2 -- -DSHIELD=reviung41
 
-      - name: Upload firmware artifact
+      - name: Subir firmware (.uf2)
         uses: actions/upload-artifact@v4
         with:
           name: reviung41-firmware
           path: build/reviung41/zephyr/zmk.uf2
-
