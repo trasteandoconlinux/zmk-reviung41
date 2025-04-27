@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: ghcr.io/zmkfirmware/zmk-dev-container:latest  # Contenedor oficial de ZMK
+      image: ghcr.io/zmkfirmware/zmk-dev-container:3.4  # Contenedor oficial de ZMK
 
     steps:
       - name: Checkout config repo
@@ -35,3 +35,4 @@ jobs:
         with:
           name: reviung41-firmware
           path: build/reviung41/zephyr/zmk.uf2
+
